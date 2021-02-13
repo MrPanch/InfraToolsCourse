@@ -1,0 +1,11 @@
+events {}
+http {
+    server {
+        listen 80;
+        root /opt;
+        location / {
+            return 404;
+        }
+        location /{{ static_file_name  }} {}  
+    }
+}

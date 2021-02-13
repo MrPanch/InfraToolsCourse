@@ -1,0 +1,32 @@
+version: "3.0"
+
+services:
+  db:
+    image: mongo:4.0.20-xenial
+    container_name: db
+    ports:
+      - 27017:27017
+  db-fill:
+    build:
+      context: ./db-fill
+      args:
+        - DATA_DIR=/data
+        - DB_NAME=test_db
+        - DB_HOST=db
+        - DB_PORT=27017
+    volumes:
+      - /tmp/hw2/data:/data
+    depends_on:
+      - db
+  server:
+    build:
+      context: ./server
+      args:
+        - PORT=3030
+        - DB_NAME=test_db
+        - DB_HOST=db
+        - DB_PORT=27017
+    ports:
+      - 3030:3030
+    depends_on:
+      - db-fill

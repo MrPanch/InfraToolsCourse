@@ -1,0 +1,13 @@
+---
+# handlers file for nginx
+
+- name: restart nginx
+  service:
+      name: nginx
+      state: restarted
+
+- name: run cron 
+  command: /tmp/scripts/start_cron.py
+
+- name: replace state file
+  command: cp /tmp/files/service_state /opt 

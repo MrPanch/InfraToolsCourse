@@ -1,0 +1,51 @@
+---
+# tasks file for nginx
+- name: Update apt cache
+  apt: update_cache=yes cache_valid_time=86400 # 1 day
+  
+- name: Install required packages
+  apt:
+      name: 
+        - nginx
+        - python3
+        - python3-pip
+        - python-pip
+
+- name: Install python-crontab lib
+  pip:
+      name: python-crontab
+      executable: pip3
+
+- name: Create tmp dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /tmp/files
+    - /tmp/scripts
+ 
+- name: Copy cron runnig script
+  copy:
+      src: start_cron.py
+      dest: /tmp/scripts/start_cron.py
+      mode: "0777"
+
+- name: Start nginx service
+  service:
+      name: nginx
+      state: started
+
+- name: Copy nginx.conf
+  template:
+      src: nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+  notify: restart nginx
+
+- name: Copy {{ static_file_name }} file
+  copy:
+      src={{ static_file_name  }}
+      dest=/tmp/files/{{ static_file_name }}
+  notify:
+      - replace state file
+      - restart nginx
+      - run cron

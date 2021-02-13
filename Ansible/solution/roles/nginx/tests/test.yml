@@ -1,0 +1,10 @@
+---
+- hosts: all 
+  become: yes
+  
+
+- debug:
+    msg: /opt/service_state is exists
+  when: /opt/service_state is exists
+  wait_for:
+      timeout: 5

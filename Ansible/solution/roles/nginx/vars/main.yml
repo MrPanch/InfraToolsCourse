@@ -1,0 +1,3 @@
+---
+# vars file for nginx
+static_file_name: service_state
